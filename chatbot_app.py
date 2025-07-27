@@ -7,7 +7,7 @@ import requests
 import os
 from langchain.agents import initialize_agent, Tool
 from langchain.agents.agent_types import AgentType
-from langchain.llms import GooglePalm
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 
@@ -80,7 +80,7 @@ tools = [
     )
 ]
 
-llm = GooglePalm(google_api_key=GEMINI_API_KEY, temperature=0)
+llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY, temperature=0)
 memory = ConversationBufferMemory(memory_key="chat_history")
 agent = initialize_agent(
     tools,
