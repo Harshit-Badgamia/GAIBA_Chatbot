@@ -52,6 +52,12 @@ def generate_summary(dataframe, company, sector_sentiment):
 # LangChain Agent Setup (with Gemini)
 # -----------------------------
 
+system_prompt = """
+You are a helpful AI assistant skilled in marketing analytics and financial analysis.
+Your goal is to assist users with smart budget allocation strategies by analyzing past ROI data,
+financial trends of companies, and market sentiment based on news. Be concise, data-driven, and strategic in your responses.
+"""
+
 tools = [
     Tool(
         name="LoadMarketingData",
@@ -80,8 +86,15 @@ tools = [
     )
 ]
 
-llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GEMINI_API_KEY, temperature=0)
+llm = ChatGoogleGenerativeAI(
+    model="gemini-flash-2.5",
+    google_api_key=GEMINI_API_KEY,
+    temperature=0.2,
+    system_message=system_prompt
+)
+
 memory = ConversationBufferMemory(memory_key="chat_history")
+
 agent = initialize_agent(
     tools,
     llm,
