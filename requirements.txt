@@ -1,10 +1,6 @@
+streamlit
 pandas
-numpy
-langchain
-openai
 yfinance
-vaderSentiment
-matplotlib
-python-dotenv
-faiss-cpu
 requests
+langchain
+google-generativeai
