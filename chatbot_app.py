@@ -3,15 +3,22 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
+import requests
+import os
 from langchain.agents import initialize_agent, Tool
 from langchain.agents.agent_types import AgentType
-from langchain.llms import OpenAI
+from langchain.llms import GooglePalm
 from langchain.prompts import PromptTemplate
-from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 
 # -----------------------------
-# Placeholder Functions (to be implemented)
+# API Keys
+# -----------------------------
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+NEWSAPI_KEY = st.secrets["NEWSAPI_KEY"]
+
+# -----------------------------
+# Placeholder Functions
 # -----------------------------
 
 def load_marketing_data(file):
@@ -24,22 +31,25 @@ def get_financial_forecast(company):
     return hist
 
 def analyze_sentiment(sector):
-    # Placeholder: Simulate sentiment score
-    return f"Sentiment for {sector} is Positive based on recent news."
+    url = f"https://newsapi.org/v2/everything?q={sector}&sortBy=publishedAt&apiKey={NEWSAPI_KEY}"
+    response = requests.get(url)
+    articles = response.json().get("articles", [])[:5]
+    titles = [article['title'] for article in articles]
+    summary = f"Recent sentiment for sector '{sector}':\n" + "\n".join(titles)
+    return summary
 
 def optimize_budget(marketing_data, forecast, total_budget):
-    # Placeholder: Simple allocation logic based on ROI
     marketing_data['Allocation'] = marketing_data['ROI'] / marketing_data['ROI'].sum()
     marketing_data['Suggested Budget'] = marketing_data['Allocation'] * total_budget
     return marketing_data[['Channel', 'Suggested Budget', 'ROI']]
 
 def generate_summary(dataframe, company, sector_sentiment):
-    summary = f"Based on financial trends of {company} and current {sector_sentiment},\n"
+    summary = f"Based on financial trends of {company} and current market sentiment: \n{sector_sentiment}\n"
     summary += "the suggested marketing budget has been allocated proportionally to past ROI performance."
     return summary
 
 # -----------------------------
-# LangChain Agent Setup
+# LangChain Agent Setup (with Gemini)
 # -----------------------------
 
 tools = [
@@ -56,7 +66,7 @@ tools = [
     Tool(
         name="AnalyzeSentiment",
         func=analyze_sentiment,
-        description="Analyzes sentiment for a given sector."
+        description="Analyzes sentiment for a given sector using NewsAPI."
     ),
     Tool(
         name="OptimizeBudget",
@@ -70,7 +80,7 @@ tools = [
     )
 ]
 
-llm = ChatOpenAI(temperature=0)
+llm = GooglePalm(google_api_key=GEMINI_API_KEY, temperature=0)
 memory = ConversationBufferMemory(memory_key="chat_history")
 agent = initialize_agent(
     tools,
