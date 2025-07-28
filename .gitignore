@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings
+.vscode/
+
+# Streamlit cache
+.streamlit/
+**/.streamlit/
+
+# Environment files
+.env
+.env.*
+
+# kaggle.json if stored locally
+kaggle.json
+~/.kaggle/kaggle.json
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db

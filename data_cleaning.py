@@ -1,14 +1,35 @@
-# data_cleaning.py
-
+import os
+import json
 import pandas as pd
 import kagglehub
 from kagglehub import KaggleDatasetAdapter
 
+# If running on Streamlit Cloud, this is needed
+import streamlit as st
+
 # -----------------------------------------
-# Function to load marketing data from Kaggle
+# Configure Kaggle credentials from Streamlit Secrets
+# -----------------------------------------
+def configure_kaggle_credentials():
+    kaggle_dict = {
+        "username": st.secrets["kaggle"]["username"],
+        "key": st.secrets["kaggle"]["key"]
+    }
+    kaggle_dir = os.path.expanduser("~/.kaggle")
+    os.makedirs(kaggle_dir, exist_ok=True)
+    kaggle_path = os.path.join(kaggle_dir, "kaggle.json")
+
+    with open(kaggle_path, "w") as f:
+        json.dump(kaggle_dict, f)
+
+    os.chmod(kaggle_path, 0o600)
+
+# -----------------------------------------
+# Load dataset from Kaggle
 # -----------------------------------------
 def load_marketing_data_from_kaggle():
-    file_path = "marketing_campaign_data.csv"  # replace with the correct filename
+    configure_kaggle_credentials()
+    file_path = "marketing_campaign_data.csv"  # Replace with correct filename
     df = kagglehub.load_dataset(
         KaggleDatasetAdapter.PANDAS,
         "manishabhatt22/marketing-campaign-performance-dataset",
@@ -17,12 +38,12 @@ def load_marketing_data_from_kaggle():
     return df
 
 # -----------------------------------------
-# Data Cleaning Functions
+# Data Cleaning Function
 # -----------------------------------------
 def clean_marketing_data(df):
     # Strip currency symbols and convert to float
     if 'Acquisition_Cost' in df.columns:
-        df['Acquisition_Cost'] = df['Acquisition_Cost'].replace('[\$,]', '', regex=True).astype(float)
+        df['Acquisition_Cost'] = df['Acquisition_Cost'].replace(r'[\$,]', '', regex=True).astype(float)
 
     # Convert Duration (e.g., '2 weeks') to integer number of days
     if 'Duration' in df.columns:
