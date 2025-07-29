@@ -1,8 +1,8 @@
-from data_cleaning import load_marketing_data_from_kaggle, clean_marketing_data
+from data_cleaning import load_marketing_data_from_zip, clean_marketing_data
 
 def main():
     # Step 1: Load the marketing data from Kaggle
-    df_raw = load_marketing_data_from_kaggle()
+    df_raw = load_marketing_data_from_zip()
     print("✅ Raw marketing data loaded successfully.")
     print(df_raw.head(), "\n")
 

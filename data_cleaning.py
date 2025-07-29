@@ -1,44 +1,23 @@
-import os
-import json
+# data_cleaning.py
+
 import pandas as pd
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
-
-# If running on Streamlit Cloud, this is needed
-import streamlit as st
+import os
+import zipfile
 
 # -----------------------------------------
-# Configure Kaggle credentials from Streamlit Secrets
+# Function to extract and load marketing data from a local zip
 # -----------------------------------------
-def configure_kaggle_credentials():
-    kaggle_dict = {
-        "username": st.secrets["kaggle"]["username"],
-        "key": st.secrets["kaggle"]["key"]
-    }
-    kaggle_dir = os.path.expanduser("~/.kaggle")
-    os.makedirs(kaggle_dir, exist_ok=True)
-    kaggle_path = os.path.join(kaggle_dir, "kaggle.json")
-
-    with open(kaggle_path, "w") as f:
-        json.dump(kaggle_dict, f)
-
-    os.chmod(kaggle_path, 0o600)
+def load_marketing_data_from_zip(zip_path='marketing_campaign_dataset.zip', csv_filename='marketing_campaign_dataset.csv'):
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall('data/')
+        df = pd.read_csv(os.path.join('data', csv_filename), encoding='ISO-8859-1', engine='python', on_bad_lines='skip')
+        return df
+    except Exception as e:
+        raise ValueError(f"Error reading file: {e}")
 
 # -----------------------------------------
-# Load dataset from Kaggle
-# -----------------------------------------
-def load_marketing_data_from_kaggle():
-    configure_kaggle_credentials()
-    file_path = "marketing_campaign_data.csv"  # Replace with correct filename
-    df = kagglehub.load_dataset(
-        KaggleDatasetAdapter.PANDAS,
-        "manishabhatt22/marketing-campaign-performance-dataset",
-        file_path
-    )
-    return df
-
-# -----------------------------------------
-# Data Cleaning Function
+# Data Cleaning Functions
 # -----------------------------------------
 def clean_marketing_data(df):
     # Strip currency symbols and convert to float
