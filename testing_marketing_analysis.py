@@ -1,10 +1,9 @@
 import pandas as pd
-from data_cleaning import load_marketing_data_from_zip, clean_marketing_data
+from data_loading import load_marketing_data_from_zip
 from marketing_analysis import run_full_marketing_analysis
 
 # Load & clean data
 df = load_marketing_data_from_zip()
-df = clean_marketing_data(df)
 
 # Run analysis
 results = run_full_marketing_analysis(df)
