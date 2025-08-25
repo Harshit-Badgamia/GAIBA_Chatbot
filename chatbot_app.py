@@ -2,7 +2,6 @@
 
 import streamlit as st
 import pandas as pd
-import yfinance as yf
 import requests
 import os
 from langchain.agents import initialize_agent, Tool
@@ -14,39 +13,8 @@ from langchain.memory import ConversationBufferMemory
 # -----------------------------
 # API Keys
 # -----------------------------
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 NEWSAPI_KEY = st.secrets["NEWSAPI_KEY"]
-
-# -----------------------------
-# Placeholder Functions
-# -----------------------------
-
-def load_marketing_data(file):
-    df = pd.read_csv(file)
-    return df
-
-def get_financial_forecast(company):
-    stock = yf.Ticker(company)
-    hist = stock.history(period="6mo")
-    return hist
-
-def analyze_sentiment(sector):
-    url = f"https://newsapi.org/v2/everything?q={sector}&sortBy=publishedAt&apiKey={NEWSAPI_KEY}"
-    response = requests.get(url)
-    articles = response.json().get("articles", [])[:5]
-    titles = [article['title'] for article in articles]
-    summary = f"Recent sentiment for sector '{sector}':\n" + "\n".join(titles)
-    return summary
-
-def optimize_budget(marketing_data, forecast, total_budget):
-    marketing_data['Allocation'] = marketing_data['ROI'] / marketing_data['ROI'].sum()
-    marketing_data['Suggested Budget'] = marketing_data['Allocation'] * total_budget
-    return marketing_data[['Channel', 'Suggested Budget', 'ROI']]
-
-def generate_summary(dataframe, company, sector_sentiment):
-    summary = f"Based on financial trends of {company} and current market sentiment: \n{sector_sentiment}\n"
-    summary += "the suggested marketing budget has been allocated proportionally to past ROI performance."
-    return summary
 
 # -----------------------------
 # LangChain Agent Setup (with Gemini)
