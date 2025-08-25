@@ -57,12 +57,12 @@ def apply_filters(df, filters: dict):
 # ----------------------------
 # Metric Calculations
 # ----------------------------
-def calculate_ctr(df):
+def calculate_ctr(df): # Click through rate
     if 'Clicks' in df.columns and 'Impressions' in df.columns:
         df['CTR'] = (df['Clicks'] / df['Impressions']) * 100
     return df
 
-def calculate_cpc(df):
+def calculate_cpc(df): #cost per click
     if 'Acquisition_Cost' in df.columns and 'Clicks' in df.columns:
         df['CPC'] = df['Acquisition_Cost'] / df['Clicks'].replace(0, pd.NA)
     return df
