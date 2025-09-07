@@ -34,7 +34,7 @@ from langchain.memory import ConversationBufferMemory, ConversationSummaryBuffer
 
 # Local modules (make sure these files exist)
 from marketing_analysis import run_full_marketing_analysis, apply_filters  # marketing_analysis.py
-from email import validate_email_df, get_sample_recipients, send_email_batch_stub  # email.py
+from email_utils import validate_email_df, get_sample_recipients, send_email_batch_stub  # email.py
 from utils import budget_allocator, parse_clusters, format_currency  # utils.py
 
 # -------------------------------
